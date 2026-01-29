@@ -2,28 +2,31 @@
 
 This document outlines the standard process for developing new features in the Neo-rag project. Following this workflow ensures consistency, quality, and alignment with our architectural principles.
 
+## 🔄 Workflow Overview
+
+Since the visual diagram may not render in all environments, here is the standard development sequence:
+
+1.  **💡 Feature Concept**: Identify a new capability or improvement.
+2.  **📝 Feature Request**: Fill out `templates/feature_request.md` with descriptions and context.
+3.  **🧠 Strategic Planning**: AI (Antigravity) generates an **Implementation Plan** in `plans/`.
+4.  **⚖️ Peer Review**: User reviews the plan and provides feedback.
+5.  **🚀 Implementation**: Development proceeds in isolated feature branches.
+6.  **✅ Verification**: Run tests and perform manual walkthroughs.
+7.  **🏁 Completion**: Merge to `main`.
+
+---
+
+### 📊 Visual Flow (Mermaid)
+
 ```mermaid
 graph TD
-    A[1. Feature Idea] --> B{Create Feature Request};
-    B --> C["templates/feature_request.md"];
-    C --> D{Generate Execution Plan};
-    D -- reads --> E["CLAUDE.md"];
-    D -- reads --> F["docs/architecture.md"];
-    D -- reads --> G[examples/];
-    D --> H["plans/feature_name.md"];
-    H --> I{Review & Approve Plan};
-    I -- Approved --> J{Switch to Code Mode};
-    J --> K[Implement Feature];
-    K --> L{Review Code};
-    L -- Approved --> M[Merge & Complete];
-
-    subgraph User
-        A; B; I; L; M;
-    end
-
-    subgraph Roo [AI Assistant]
-        D; J; K;
-    end
+    A["💡 Idea"] --> B["📝 Request"]
+    B --> C["🧠 Plan"]
+    C --> D{"⚖️ Review"}
+    D -- "Approved" --> E["🚀 Code"]
+    E --> F["✅ Test"]
+    F --> G["🏁 Done"]
+    D -- "Changes" --> C
 ```
 
 ## Workflow Steps

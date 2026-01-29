@@ -38,31 +38,72 @@ Designed for developers looking for high-accuracy, transparent, and manageable R
 
 ---
 
-## ⚡ Quick Start
+## ⚙️ Installation & Setup
 
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- Neon & Neo4j accounts
+Neo-rag 2.0 consists of a **FastAPI Backend** and a **React Frontend**. Follow these steps to get both servers running.
 
-### 1. Clone & Setup Backend
+### 1. Prerequisites
+- **Python 3.10+**
+- **Node.js 18+** (npm or yarn)
+- **Neon PostgreSQL** account (for Vector Search)
+- **Neo4j Aura** account (for Knowledge Graph)
+
+### 2. Clone the Repository
 ```bash
 git clone https://github.com/iamneonerd/Neo-rag.git
-cd neo-rag/backend
-pip install -r requirements.txt
-cp .env.example .env
-uvicorn app.main:app --reload
+cd Neo-rag
 ```
 
-### 2. Start Frontend
-```bash
-cd ../frontend
-npm install
-npm start
-```
+### 3. Backend Setup (FastAPI)
+The backend handles the RAG logic, database connections, and LLM orchestration.
 
-### 3. Launch
-Open **http://localhost:3000** and follow the **Setup Wizard** to configure your databases and LLM keys.
+1. **Navigate to backend directory**:
+   ```bash
+   cd backend
+   ```
+2. **Create a virtual environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+3. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. **Configure Environment**:
+   ```bash
+   cp .env.example .env
+   ```
+   *Edit `.env` with your initial service placeholders if needed, though most config is handled via the UI.*
+5. **Start Backend Server**:
+   ```bash
+   uvicorn app.main:app --reload --port 8000
+   ```
+   *Backend will be live at http://localhost:8000*
+
+### 4. Frontend Setup (React)
+The frontend provides the interactive dashboard and setup wizard.
+
+1. **Navigate to frontend directory**:
+   ```bash
+   cd ../frontend
+   ```
+2. **Install packages**:
+   ```bash
+   npm install
+   ```
+3. **Start Development Server**:
+   ```bash
+   npm start
+   ```
+   *Frontend will open at http://localhost:3000*
+
+### 5. Final Configuration
+Once both servers are running:
+1. Open **http://localhost:3000** in your browser.
+2. The **Setup Wizard** will automatically launch.
+3. Enter your Neon, Neo4j, and LLM API keys.
+4. Verify connections in the **Health Dashboard**.
 
 ---
 
