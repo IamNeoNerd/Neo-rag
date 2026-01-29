@@ -96,6 +96,6 @@ npm test
 - **TypeScript**: Follow the existing ESLint configuration.
 
 ## 🐛 Reporting Bugs
-Please check the [Issues](https://github.com/your-username/neo-rag/issues) page to see if the bug has already been reported. If not, open a new issue with a reproduction path.
+Please check the [Issues](https://github.com/iamneonerd/neo-rag/issues) page to see if the bug has already been reported. If not, open a new issue with a reproduction path.
 
 Happy Coding! 🚀
