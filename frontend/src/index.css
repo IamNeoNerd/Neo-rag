@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 dark:bg-dark-300 dark:text-gray-100;
+  }
+}
+
+/* Custom component classes */
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 
+           transition-colors duration-200 font-medium disabled:opacity-50;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 
+           dark:bg-dark-100 dark:text-gray-100 dark:hover:bg-gray-700
+           transition-colors duration-200 font-medium;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg 
+           focus:ring-2 focus:ring-primary-500 focus:border-transparent
+           dark:bg-dark-100 dark:border-gray-600 dark:text-white
+           transition-all duration-200;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 
+           dark:bg-dark-200 dark:border-gray-700 p-4;
+  }
+  
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .status-connected {
+    @apply status-badge bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400;
+  }
+  
+  .status-disconnected {
+    @apply status-badge bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
+  }
+  
+  .status-warning {
+    @apply status-badge bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400;
+  }
+}

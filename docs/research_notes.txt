@@ -1,0 +1,60 @@
+Hybrid Vector-Graph RAG Systems
+ 
+Figure: Combining knowledge graphs with vector search in a RAG pipeline. Ingestion builds a graph (nodes/relationships) and a vector index, then user queries trigger LLM-generated graph queries (e.g. Cypher) combined with similarity search【44†】. Modern RAG systems can retrieve from both a semantic vector store (text chunks) and a structured knowledge graph (entities/relations) to improve answer accuracy. The following open-source projects and demos exemplify this hybrid approach, often using LLM agents (LangChain, LangGraph/CrewAI, etc.) to route queries. Each entry below lists the project name, tech stack, retrieval architecture, and any agent orchestration details, with code/architecture citations.
+•	Sarabesh/HybridRAG (GitHub) – A Python/Jupyter demo of hybrid RAG combining document embeddings and a Neo4j knowledge graph[1].
+•	Tech: Python (Jupyter Notebook), Neo4j graph database; uses Ollama and Google Gemini LLMs and embedding APIs.
+•	Retrieval: Performs vector search over text-chunks (via embeddings) and graph traversal in Neo4j; merges both results as context for the LLM[1].
+•	Agents: This example uses a simple pipeline (no explicit agent framework) that executes vector and graph queries in sequence; the results are concatenated and fed to the LLM.
+•	HybridRAG (Sarmah et al., 2024) – An academic prototype (paper/arXiv) combining GraphRAG and VectorRAG techniques for financial docs[2].
+•	Tech: Python with LangChain-like chains; builds a knowledge graph by LLM extraction from text and also indexes text chunks in a vector store.
+•	Retrieval: At query time, context is retrieved from both the vector database and the knowledge graph, then fed to the LLM. The authors report that retrieving from both sources outperforms either alone[2].
+•	Agents: The paper itself does not provide an agent orchestration library, but it conceptually motivates hybrid retrieval (no published code found).
+•	Neo4j GraphRAG (neo4j/neo4j-graphrag-python) – Official Python library for GraphRAG with Neo4j[3].
+•	Tech: Python, Neo4j (5.x), LangChain/GraphRAG components; supports OpenAI/Mistral/Cohere LLMs and external vector stores (Weaviate, Pinecone, Qdrant, etc.) as optional components[4].
+•	Retrieval: Primarily graph-based: the library provides retrievers that formulate Cypher or graph algorithms to fetch nodes/relations. It can also embed document chunks into a Neo4j vector index and run a vector similarity search (see VectorRetriever example)[5].
+•	Agents: Intended for use with LangChain-style pipelines. In examples, a GraphRAG chain can directly query Neo4j via the LLM (GraphCypherQAChain). There is no autonomous agent “router” in the library itself, but the library integrates with LangChain chains[5].
+•	knowledge-graph-rag (GitHub) – A demo repo showing RAG with Neo4j and LangChain (Roman Empire & healthcare examples).
+•	Tech: Python, Neo4j graph database, LangChain; uses OpenAI API for LLM (GPT models).
+•	Retrieval: Builds a domain-specific knowledge graph in Neo4j (entities/relations) and uses it alongside text search. The README highlights “hybrid retrieval combining structured and unstructured data”[6]. It likely uses Neo4j full-text/keyword search on nodes plus text context.
+•	Agents: Uses LangChain to construct QA chains; no explicit multi-agent routing. The code shows LangChain chains that query Neo4j (via Cypher) when answering questions (e.g. roman_emp_graph_rag.chain.invoke(...)[7]).
+•	LangChain Blog – “Enhancing RAG… with Knowledge Graphs” – A partner blog (Neo4j) demonstrating a hybrid LangChain+Neo4j RAG pipeline[8].
+•	Tech: Python, LangChain (LLM chain), Neo4j; uses OpenAI GPT (GPT-4, function-calling) for graph construction and retrieval reasoning.
+•	Retrieval: Ingests documents (e.g. Wikipedia text), uses an LLMGraphTransformer to extract entities/relations into Neo4j, and then performs a hybrid retrieval: vector (and keyword) search on Document nodes plus traversals on the graph. The blog illustrates combining “keyword and vector searches to search through unstructured text data and [combining] it with the information it collects from the knowledge graph”[9]. They even use Neo4jVector.from_existing_graph(...) to configure both a text-vector index and a keyword index on nodes[10].
+•	Agents: This is a static pipeline, not an agent framework. It manually builds the graph and then queries it with LangChain chains (e.g. Neo4jGraph.search() with vector+graph).
+•	Neo4j Hackernoon – “Hybrid RAG Agent with Neo4j & Milvus” – A Neo4j blog showing an LLM agent that routes between Milvus vector DB and Neo4j graph[11].
+•	Tech: Python, Neo4j graph DB, Milvus vector DB, LangChain (LangGraph extension), local LLM (Llama 3.1 via Ollama) and GPT-4o.
+•	Retrieval: The system builds a Neo4j knowledge graph from documents and stores document chunks in Milvus. An LLM “routing agent” first decides whether to query Milvus (semantic vector search), Neo4j (graph query via Cypher), or both. The retrieved results from Milvus and Neo4j are then combined for answer generation. The architecture explicitly uses routing, fallback, and self-correction mechanisms[12][13].
+•	Agents: Fully agentic. The post defines a multi-component LangChain agent: a routing chain, a GraphCypherQAChain (which uses the LLM to generate Cypher for Neo4j)[14], and a “Composite Agent” that merges graph and vector results[15]. The agent uses LangGraph components and a custom prompt to instruct the LLM on how to use both sources.
+•	Graphiti (getzep/graphiti) – Open-source framework for real-time knowledge graphs in AI agents[16].
+•	Tech: Python (3.10+), Neo4j or FalkorDB (for embedding storage), OpenAI or other LLMs.
+•	Retrieval: Graphiti continuously ingests streaming data into a temporal knowledge graph. It supports hybrid retrieval: combining semantic embeddings, BM25/keyword, and graph traversals[17]. For example, a query can simultaneously search for semantically similar nodes (via stored embeddings) and then follow graph edges to enrich answers.
+•	Agents: Designed as an agent memory/middleware. It can serve as the context store for AI agents (Claude, etc.) via the Zep platform. Graphiti itself is not an LLM chain, but it is meant to be used by agents to provide context. It effectively “orchestrates” retrieval under the hood (no explicit LangChain, but it provides query interfaces for agents).
+•	LightRAG (HKUDS/LightRAG) – A Python RAG system with built-in graph support[18][19].
+•	Tech: Python, supports many vector DB backends (Milvus, FAISS, PGVector, Qdrant, Chroma, etc.) and graph stores (Postgres with Apache AGE, MongoDB, Neo4j)[18]. Integrates with Ollama or HuggingFace LLMs for generation.
+•	Retrieval: LightRAG explicitly supports a “mix” retrieval mode: it can retrieve relevant text chunks via vector search and pull related entities/relations from the knowledge graph in one pipeline[19]. For example, when set to mode “mix”, LightRAG returns context from both the vector index and the graph simultaneously. (It also has modes for local vs. global vs. hybrid search.) The system extracts entities/relations from documents to build the graph, then can rerank or combine results.
+•	Agents: LightRAG is not an autonomous agent per se, but it provides a server API that can be queried like an LLM (there is a LightRAG GUI/demo). It does not currently include a LangChain-style router, but it does guide how retrieval and reranking are combined.
+•	Hugging Face Cookbook – “Enhancing RAG Reasoning with Knowledge Graphs” – An HF tutorial combining Neo4j and vector search[20].
+•	Tech: Python, Neo4j graph DB, HuggingFace Transformers & LangChain. Uses any embedding model to vectorize fields of data (e.g. titles/abstracts of papers).
+•	Retrieval: The notebook builds a Neo4j graph (e.g. of papers/authors) and also creates a separate vector index over some data fields. At query time, it demonstrates two paths: (1) generate Cypher queries from the natural-language question using LangChain’s Neo4jGraph and (2) run vector similarity search on the index. The idea is “to leverage multi-hop connectivity [of KGs] and embeddings… to enhance reasoning”[20].
+•	Agents: This is not an agent framework; it’s a static LLM/Q&A setup. It does show how to use Neo4jGraph.query() and also use an embedding retriever, then feed results to the LLM.
+Each of the above resources provides code or architecture diagrams for hybrid RAG. By combining semantic vector search (via pgvector, FAISS, Milvus, ChromaDB, etc.) with structured graph queries (Neo4j, RDF stores, etc.), and often using an LLM-based controller (LangChain, agent chains), these projects demonstrate how to orchestrate multi-modal retrieval for RAG.
+Sources: Official GitHub repos and documentation for each project[1][3][6][17][18][19]; LangChain and Neo4j blog posts[8][11]; Hugging Face AI Cookbook tutorial[20]; and the HybridRAG research paper summary[2].
+________________________________________
+[1] GitHub - sarabesh/HybridRAG: A hybrid retrieval system for RAG that combines vector search and graph search, integrating unstructured and structured data. It retrieves context using embeddings and a knowledge graph, then passes it to an LLM for generating accurate responses.
+https://github.com/sarabesh/HybridRAG
+[2] Paper page - HybridRAG: Integrating Knowledge Graphs and Vector Retrieval Augmented Generation for Efficient Information Extraction
+https://huggingface.co/papers/2408.04948
+[3] [4] [5] GitHub - neo4j/neo4j-graphrag-python: Neo4j GraphRAG for Python
+https://github.com/neo4j/neo4j-graphrag-python
+[6] [7] GitHub - pdichone/knowledge-graph-rag
+https://github.com/pdichone/knowledge-graph-rag
+[8] [9] [10] Enhancing RAG-based application accuracy by constructing and leveraging knowledge graphs
+https://blog.langchain.com/enhancing-rag-based-applications-accuracy-by-constructing-and-leveraging-knowledge-graphs/
+[11] [12] [13] [14] [15] Building a Hybrid RAG Agent with Neo4j Graphs and Milvus Vector Search | HackerNoon
+https://hackernoon.com/building-a-hybrid-rag-agent-with-neo4j-graphs-and-milvus-vector-search
+[16] [17] GitHub - getzep/graphiti: Build Real-Time Knowledge Graphs for AI Agents
+https://github.com/getzep/graphiti
+[18] [19] GitHub - HKUDS/LightRAG: "LightRAG: Simple and Fast Retrieval-Augmented Generation"
+https://github.com/HKUDS/LightRAG
+[20] Enhancing RAG Reasoning with Knowledge Graphs - Hugging Face Open-Source AI Cookbook
+https://huggingface.co/learn/cookbook/en/rag_with_knowledge_graphs_neo4j
